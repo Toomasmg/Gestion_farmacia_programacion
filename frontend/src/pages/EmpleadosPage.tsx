@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { API_URL } from '../api'
+import {
+  Alert,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material'
+
 
 type Empleado = {
   id: number
@@ -162,7 +175,7 @@ export function EmpleadosPage() {
     }
   }
 
-  return (
+    return (
     <section>
       <header className="page-header page-header--row">
         <div>
@@ -171,159 +184,148 @@ export function EmpleadosPage() {
           <p>Administrá los datos del personal de la farmacia.</p>
         </div>
 
-        <button type="button" onClick={nuevoEmpleado}>
+        <Button variant="contained" onClick={nuevoEmpleado}>
           Nuevo empleado
-        </button>
+        </Button>
       </header>
 
       {mostrarFormulario && (
-        <form className="formulario" onSubmit={guardarEmpleado}>
-          <h2>
+        <Box
+          component="form"
+          onSubmit={guardarEmpleado}
+          sx={{ display: 'grid', gap: 2, maxWidth: 480, mb: 3 }}
+        >
+          <Typography variant="h6" component="h2">
             {empleadoEditando ? 'Editar empleado' : 'Nuevo empleado'}
-          </h2>
+          </Typography>
 
-          <label>
-            Nombre
-            <input
-              type="text"
-              value={nombre}
-              onChange={(event) => setNombre(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Nombre"
+            value={nombre}
+            onChange={(event) => setNombre(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <label>
-            Apellido
-            <input
-              type="text"
-              value={apellido}
-              onChange={(event) => setApellido(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Apellido"
+            value={apellido}
+            onChange={(event) => setApellido(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <label>
-            DNI
-            <input
-              type="text"
-              value={dni}
-              onChange={(event) => setDni(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="DNI"
+            value={dni}
+            onChange={(event) => setDni(event.target.value)}
+            helperText="Entre 7 y 9 dígitos, sin puntos"
+            required
+            fullWidth
+          />
 
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <label>
-            Teléfono
-            <input
-              type="text"
-              value={telefono}
-              onChange={(event) => setTelefono(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Teléfono"
+            value={telefono}
+            onChange={(event) => setTelefono(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <label>
-            Cargo
-            <input
-              type="text"
-              value={cargo}
-              onChange={(event) => setCargo(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Cargo"
+            value={cargo}
+            onChange={(event) => setCargo(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <label>
-            Fecha de ingreso
-            <input
-              type="date"
-              value={fechaIngreso}
-              onChange={(event) => setFechaIngreso(event.target.value)}
-              required
-            />
-          </label>
+          <TextField
+            label="Fecha de ingreso"
+            type="date"
+            value={fechaIngreso}
+            onChange={(event) => setFechaIngreso(event.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+            fullWidth
+          />
 
-          <div className="formulario__acciones">
-            <button type="submit">
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button type="submit" variant="contained">
               {empleadoEditando ? 'Guardar cambios' : 'Crear empleado'}
-            </button>
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="outlined"
               onClick={() => {
                 limpiarFormulario()
                 setMostrarFormulario(false)
               }}
             >
               Cancelar
-            </button>
-          </div>
-        </form>
+            </Button>
+          </Box>
+        </Box>
       )}
 
-      {cargando && (
-        <div className="empty-state">Cargando empleados...</div>
-      )}
+      {cargando && <Alert severity="info">Cargando empleados...</Alert>}
 
       {!cargando && empleados.length === 0 && (
-        <div className="empty-state">
-          Todavía no hay empleados para mostrar.
-        </div>
+        <Alert severity="info">Todavía no hay empleados para mostrar.</Alert>
       )}
 
       {!cargando && empleados.length > 0 && (
-        <div className="tabla-contenedor">
-          <table>
-            <thead>
-              <tr>
-                <th>Nombre y apellido</th>
-                <th>DNI</th>
-                <th>Email</th>
-                <th>Cargo</th>
-                <th>Ingreso</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombre y apellido</TableCell>
+              <TableCell>DNI</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Cargo</TableCell>
+              <TableCell>Ingreso</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
 
-            <tbody>
-              {empleados.map((empleado) => (
-                <tr key={empleado.id}>
-                  <td>
-                    {empleado.nombre} {empleado.apellido}
-                  </td>
-                  <td>{empleado.dni}</td>
-                  <td>{empleado.email}</td>
-                  <td>{empleado.cargo}</td>
-                  <td>{empleado.fechaIngreso.slice(0, 10)}</td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => editarEmpleado(empleado)}
-                    >
-                      Editar
-                    </button>
+          <TableBody>
+            {empleados.map((empleado) => (
+              <TableRow key={empleado.id}>
+                <TableCell>
+                  {empleado.nombre} {empleado.apellido}
+                </TableCell>
+                <TableCell>{empleado.dni}</TableCell>
+                <TableCell>{empleado.email}</TableCell>
+                <TableCell>{empleado.cargo}</TableCell>
+                <TableCell>{empleado.fechaIngreso.slice(0, 10)}</TableCell>
+                <TableCell>
+                  <Button
+                    size="small"
+                    onClick={() => editarEmpleado(empleado)}
+                  >
+                    Editar
+                  </Button>
 
-                    <button
-                      type="button"
-                      onClick={() => eliminarEmpleado(empleado.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() => eliminarEmpleado(empleado.id)}
+                  >
+                    Eliminar
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </section>
   )
