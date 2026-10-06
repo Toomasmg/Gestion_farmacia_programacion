@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import { API_URL } from '../api'
 
 type Categoria = {
   id: number
@@ -26,7 +27,7 @@ export function CategoriasPage() {
   useEffect(() => {
     async function traerCategorias() {
       try {
-        const respuesta = await fetch('http://localhost:3000/categorias')
+        const respuesta = await fetch(`${API_URL}/categorias`)
         const datos = await respuesta.json()
 
         setCategorias(datos)
