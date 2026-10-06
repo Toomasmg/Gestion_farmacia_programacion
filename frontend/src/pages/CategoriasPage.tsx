@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { API_URL } from '../api'
-
+import {
+  Alert,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@mui/material'
 type Categoria = {
   id: number
   nombre: string
@@ -144,7 +154,7 @@ export function CategoriasPage() {
     setMostrarFormulario(true)
   }
 
-  return (
+    return (
     <section>
       <header className="page-header page-header--row">
         <div>
@@ -153,8 +163,8 @@ export function CategoriasPage() {
           <p>Organizá los medicamentos por categoría.</p>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="contained"
           onClick={() => {
             setCategoriaEditando(null)
             setNombre('')
@@ -163,81 +173,90 @@ export function CategoriasPage() {
           }}
         >
           Nueva categoría
-        </button>
+        </Button>
       </header>
 
       {mostrarFormulario && (
-        <form onSubmit={guardarCategoria}>
-          <p>
-            <label>
-              Nombre
-              <br />
-              <input
-                value={nombre}
-                onChange={(event) => setNombre(event.target.value)}
-                maxLength={100}
-              />
-            </label>
-          </p>
+        <Box
+          component="form"
+          onSubmit={guardarCategoria}
+          sx={{ display: 'grid', gap: 2, maxWidth: 480, mb: 3 }}
+        >
+          <TextField
+            label="Nombre"
+            value={nombre}
+            onChange={(event) => setNombre(event.target.value)}
+            slotProps={{ htmlInput: { maxLength: 100 } }}
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Descripción
-              <br />
-              <input
-                value={descripcion}
-                onChange={(event) => setDescripcion(event.target.value)}
-              />
-            </label>
-          </p>
+          <TextField
+            label="Descripción"
+            value={descripcion}
+            onChange={(event) => setDescripcion(event.target.value)}
+            fullWidth
+          />
 
-          <button type="submit">
-            {categoriaEditando ? 'Guardar cambios' : 'Guardar categoría'}
-          </button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button type="submit" variant="contained">
+              {categoriaEditando ? 'Guardar cambios' : 'Guardar categoría'}
+            </Button>
 
-          <button
-            type="button"
-            onClick={() => setMostrarFormulario(false)}
-          >
-            Cancelar
-          </button>
-        </form>
+            <Button
+              variant="outlined"
+              onClick={() => setMostrarFormulario(false)}
+            >
+              Cancelar
+            </Button>
+          </Box>
+        </Box>
       )}
 
-      {cargando && (
-        <div className="empty-state">Cargando categorías...</div>
-      )}
+      {cargando && <Alert severity="info">Cargando categorías...</Alert>}
 
       {!cargando && categorias.length === 0 && (
-        <div className="empty-state">
-          Todavía no hay categorías para mostrar.
-        </div>
+        <Alert severity="info">Todavía no hay categorías para mostrar.</Alert>
       )}
 
       {!cargando && categorias.length > 0 && (
-        <ul>
-          {categorias.map((categoria) => (
-            <li key={categoria.id}>
-              <strong>{categoria.nombre}</strong>
-              {' — '}
-              {categoria.descripcion || 'Sin descripción'}
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Descripción</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
 
-            <button
-              type="button"
-              onClick={() => editarCategoria(categoria)}
-            >
-              Editar
-            </button>
+          <TableBody>
+            {categorias.map((categoria) => (
+              <TableRow key={categoria.id}>
+                <TableCell>{categoria.nombre}</TableCell>
+                <TableCell>
+                  {categoria.descripcion || 'Sin descripción'}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    size="small"
+                    onClick={() => editarCategoria(categoria)}
+                  >
+                    Editar
+                  </Button>
 
-              <button
-                type="button"
-                onClick={() => eliminarCategoria(categoria.id, categoria.nombre)}
-              >
-                Eliminar
-              </button>
-            </li>
-          ))}
-        </ul>
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() =>
+                      eliminarCategoria(categoria.id, categoria.nombre)
+                    }
+                  >
+                    Eliminar
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </section>
   )

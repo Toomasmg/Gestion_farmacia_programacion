@@ -1,6 +1,18 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { API_URL } from '../api'
+import {
+  Alert,
+  Box,
+  Button,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@mui/material'
 
 type Categoria = {
   id: number
@@ -160,7 +172,7 @@ export function MedicamentosPage() {
   }
 
 
-  return (
+    return (
     <section>
       <header className="page-header page-header--row">
         <div>
@@ -169,170 +181,151 @@ export function MedicamentosPage() {
           <p>Consultá y administrá el stock de la farmacia.</p>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="contained"
           onClick={() => {
             limpiarFormulario()
             setMostrarFormulario(true)
           }}
         >
           Nuevo medicamento
-        </button>
+        </Button>
       </header>
 
       {mostrarFormulario && (
-        <form onSubmit={guardarMedicamento}>
-          <p>
-            <label>
-              Nombre
-              <br />
-              <input
-                value={nombre}
-                onChange={(event) => setNombre(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+        <Box
+          component="form"
+          onSubmit={guardarMedicamento}
+          sx={{ display: 'grid', gap: 2, maxWidth: 480, mb: 3 }}
+        >
+          <TextField
+            label="Nombre"
+            value={nombre}
+            onChange={(event) => setNombre(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Descripción
-              <br />
-              <input
-                value={descripcion}
-                onChange={(event) => setDescripcion(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+          <TextField
+            label="Descripción"
+            value={descripcion}
+            onChange={(event) => setDescripcion(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Precio
-              <br />
-              <input
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={precio}
-                onChange={(event) => setPrecio(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+          <TextField
+            label="Precio"
+            type="number"
+            value={precio}
+            onChange={(event) => setPrecio(event.target.value)}
+            slotProps={{ htmlInput: { min: 0.01, step: 0.01 } }}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Stock
-              <br />
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={stock}
-                onChange={(event) => setStock(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+          <TextField
+            label="Stock"
+            type="number"
+            value={stock}
+            onChange={(event) => setStock(event.target.value)}
+            slotProps={{ htmlInput: { min: 0, step: 1 } }}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Laboratorio
-              <br />
-              <input
-                value={laboratorio}
-                onChange={(event) => setLaboratorio(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+          <TextField
+            label="Laboratorio"
+            value={laboratorio}
+            onChange={(event) => setLaboratorio(event.target.value)}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Fecha de vencimiento
-              <br />
-              <input
-                type="date"
-                value={fechaVencimiento}
-                onChange={(event) => setFechaVencimiento(event.target.value)}
-                required
-              />
-            </label>
-          </p>
+          <TextField
+            label="Fecha de vencimiento"
+            type="date"
+            value={fechaVencimiento}
+            onChange={(event) => setFechaVencimiento(event.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            required
+            fullWidth
+          />
 
-          <p>
-            <label>
-              Categoría
-              <br />
-              <select
-                value={categoriaId}
-                onChange={(event) => setCategoriaId(event.target.value)}
-                required
-              >
-                <option value="">Elegí una categoría</option>
-
-                {categorias.map((categoria) => (
-                  <option key={categoria.id} value={categoria.id}>
-                    {categoria.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </p>
-
-          <button type="submit">
-            {medicamentoEditando ? 'Guardar cambios' : 'Guardar medicamento'}
-          </button>
-
-          <button
-            type="button"
-            onClick={limpiarFormulario}
+          <TextField
+            select
+            label="Categoría"
+            value={categoriaId}
+            onChange={(event) => setCategoriaId(event.target.value)}
+            required
+            fullWidth
           >
-            Cancelar
-          </button>
-        </form>
+            {categorias.map((categoria) => (
+              <MenuItem key={categoria.id} value={String(categoria.id)}>
+                {categoria.nombre}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button type="submit" variant="contained">
+              {medicamentoEditando ? 'Guardar cambios' : 'Guardar medicamento'}
+            </Button>
+
+            <Button variant="outlined" onClick={limpiarFormulario}>
+              Cancelar
+            </Button>
+          </Box>
+        </Box>
       )}
 
-      {cargando && (
-        <div className="empty-state">Cargando medicamentos...</div>
-      )}
+      {cargando && <Alert severity="info">Cargando medicamentos...</Alert>}
 
       {!cargando && medicamentos.length === 0 && (
-        <div className="empty-state">
-          Todavía no hay medicamentos para mostrar.
-        </div>
+        <Alert severity="info">Todavía no hay medicamentos para mostrar.</Alert>
       )}
 
       {!cargando && medicamentos.length > 0 && (
-        <ul>
-          {medicamentos.map((medicamento) => (
-            <li key={medicamento.id}>
-              <strong>{medicamento.nombre}</strong>
-              {' — '}
-              ${medicamento.precio}
-              {' — '}
-              Stock: {medicamento.stock}
-              {' — '}
-              Categoría: {medicamento.categoria.nombre}
-              <button
-                type="button"
-                onClick={() => editarMedicamento(medicamento)}
-              >
-                Editar
-              </button>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Precio</TableCell>
+              <TableCell>Stock</TableCell>
+              <TableCell>Categoría</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
 
-              <button
-                type="button"
-                onClick={() =>
-                  eliminarMedicamento(medicamento.id, medicamento.nombre)
-                }
-              >
-                Eliminar
-              </button>
-            </li>
-          ))}
-        </ul>
+          <TableBody>
+            {medicamentos.map((medicamento) => (
+              <TableRow key={medicamento.id}>
+                <TableCell>{medicamento.nombre}</TableCell>
+                <TableCell>${medicamento.precio}</TableCell>
+                <TableCell>{medicamento.stock}</TableCell>
+                <TableCell>{medicamento.categoria.nombre}</TableCell>
+                <TableCell>
+                  <Button
+                    size="small"
+                    onClick={() => editarMedicamento(medicamento)}
+                  >
+                    Editar
+                  </Button>
+
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() =>
+                      eliminarMedicamento(medicamento.id, medicamento.nombre)
+                    }
+                  >
+                    Eliminar
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </section>
   )
