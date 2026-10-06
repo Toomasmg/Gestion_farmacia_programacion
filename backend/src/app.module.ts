@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriasModule } from './categorias/categorias.module';
 import { MedicamentosModule } from './medicamentos/medicamentos.module';
+import { EmpleadosModule } from './empleados/empleados.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { MedicamentosModule } from './medicamentos/medicamentos.module';
         autoLoadEntities: true,
         synchronize: true,
       }),
-    }), CategoriasModule, MedicamentosModule,
+    }), CategoriasModule, MedicamentosModule, EmpleadosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
