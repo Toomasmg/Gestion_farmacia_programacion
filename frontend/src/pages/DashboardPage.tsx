@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
 import { API_URL } from '../api'
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from '@mui/material'
+
 
 type Categoria = {
   id: number
@@ -56,8 +65,7 @@ export function DashboardPage() {
         setCargando(false)
       }
     }
-
-    traerDatos()
+    void traerDatos()
   }, [])
 
   // Hoy a medianoche y el límite de 30 días.
@@ -75,12 +83,16 @@ export function DashboardPage() {
     .filter((item) => item.fecha <= limite)
     .sort((a, b) => a.fecha.getTime() - b.fecha.getTime())
 
-  if (cargando) {
-    return <p>Cargando dashboard...</p>
+    if (cargando) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+        <CircularProgress />
+      </Box>
+    )
   }
 
   if (error) {
-    return <p>{error}</p>
+    return <Alert severity="error">{error}</Alert>
   }
 
   return (
@@ -93,25 +105,44 @@ export function DashboardPage() {
         </div>
       </header>
 
-      <section className="dashboard-cards">
-        <article className="summary-card">
-          <span>Medicamentos</span>
-          <strong>{medicamentos.length}</strong>
-          <p>Registrados en el sistema.</p>
-        </article>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          flexWrap: 'wrap',
+          mb: 4,
+        }}
+      >
+        <Card sx={{ flex: '1 1 180px' }}>
+          <CardContent>
+            <Typography color="text.secondary">Medicamentos</Typography>
+            <Typography variant="h3">{medicamentos.length}</Typography>
+            <Typography variant="body2">
+              Registrados en el sistema.
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <article className="summary-card">
-          <span>Categorías</span>
-          <strong>{categorias.length}</strong>
-          <p>Registradas en el sistema.</p>
-        </article>
+        <Card sx={{ flex: '1 1 180px' }}>
+          <CardContent>
+            <Typography color="text.secondary">Categorías</Typography>
+            <Typography variant="h3">{categorias.length}</Typography>
+            <Typography variant="body2">
+              Registradas en el sistema.
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <article className="summary-card">
-          <span>Empleados</span>
-          <strong>{empleados.length}</strong>
-          <p>Registrados en el sistema.</p>
-        </article>
-      </section>
+        <Card sx={{ flex: '1 1 180px' }}>
+          <CardContent>
+            <Typography color="text.secondary">Empleados</Typography>
+            <Typography variant="h3">{empleados.length}</Typography>
+            <Typography variant="body2">
+              Registrados en el sistema.
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       <section>
         <h2>Próximos vencimientos</h2>
