@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CategoriasModule } from './categorias/categorias.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { AppService } from './app.service';
         autoLoadEntities: true,
         synchronize: true,
       }),
-    }),
+    }), CategoriasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
