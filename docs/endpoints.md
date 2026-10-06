@@ -100,3 +100,51 @@ Campos:
 | 404 | No existe el medicamento, o no existe la `categoriaId` enviada |
 
 Al editar con PATCH **no** hay que enviar `id`, `categoria`, `createdAt` ni `updatedAt`.
+
+## Empleados
+
+Campos:
+
+| Campo | Tipo | Reglas |
+|-------|------|--------|
+| `id` | número | lo genera la API |
+| `nombre` | texto | obligatorio, máx. 100 |
+| `apellido` | texto | obligatorio, máx. 100 |
+| `dni` | texto | 7 a 9 dígitos, sin puntos; único |
+| `email` | texto | email válido, máx. 150; único |
+| `telefono` | texto | obligatorio, máx. 30 |
+| `cargo` | texto | obligatorio, máx. 100 |
+| `fechaIngreso` | texto `YYYY-MM-DD` | fecha válida |
+| `createdAt`, `updatedAt` | fecha ISO | los genera la API |
+
+| Método | Ruta | Descripción | Respuesta OK |
+|--------|------|-------------|--------------|
+| GET | `/empleados` | Lista todos, ordenados por apellido y nombre | 200 + arreglo |
+| GET | `/empleados/:id` | Devuelve uno | 200 + objeto |
+| POST | `/empleados` | Crea uno | 201 + objeto creado |
+| PATCH | `/empleados/:id` | Edita uno o más campos | 200 + objeto actualizado |
+| DELETE | `/empleados/:id` | Elimina | 204 sin cuerpo |
+
+### Ejemplo: crear
+
+```json
+{
+  "nombre": "Ana",
+  "apellido": "Perez",
+  "dni": "30123456",
+  "email": "ana@farmacia.com",
+  "telefono": "2615550000",
+  "cargo": "Farmaceutica",
+  "fechaIngreso": "2024-03-01"
+}
+```
+
+### Errores
+
+| Código | Cuándo |
+|--------|--------|
+| 400 | Validación: campo faltante o inválido, DNI con puntos o largo incorrecto, email inválido, fecha inválida, propiedad que no existe, o `:id` no numérico |
+| 404 | No existe un empleado con ese `id` |
+| 409 | Ya existe un empleado con ese DNI o ese email |
+
+Al editar con PATCH **no** hay que enviar `id`, `createdAt` ni `updatedAt`.
