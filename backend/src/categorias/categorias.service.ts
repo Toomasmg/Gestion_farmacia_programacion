@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError,Repository } from 'typeorm';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { Categoria } from './entities/categoria.entity';
@@ -45,7 +45,19 @@ export class CategoriasService {
 
   async remove(id: number): Promise<void> {
     const categoria = await this.findOne(id);
-    await this.categoriasRepository.remove(categoria);
+    try {
+      await this.categoriasRepository.remove(categoria);
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedError & { errno?: number }).errno === 1451
+      ) {
+        throw new ConflictException(
+          'No se puede eliminar la categoría porque tiene medicamentos asociados',
+        );
+      }
+      throw error;
+    }
   }
 
   private async verificarNombreLibre(nombre: string): Promise<void> {
