@@ -1,20 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { EmpleadosController } from './empleados.controller';
 import { EmpleadosService } from './empleados.service';
 
 describe('EmpleadosController', () => {
   let controller: EmpleadosController;
+  const service = { findAll: jest.fn() };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       controllers: [EmpleadosController],
-      providers: [EmpleadosService],
+      providers: [{ provide: EmpleadosService, useValue: service }],
     }).compile();
-
-    controller = module.get<EmpleadosController>(EmpleadosController);
+    controller = module.get(EmpleadosController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('findAll devuelve lo que entrega el servicio', async () => {
+    service.findAll.mockResolvedValue([{ id: 1, nombre: 'Ana' }]);
+
+    expect(await controller.findAll()).toHaveLength(1);
   });
 });
